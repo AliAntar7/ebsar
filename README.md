@@ -1,6 +1,6 @@
 # ebsar
 
-Graduation project ,an entirely Arabic application to help the blind to hear Arabic audio books.
+An application in Arabic to help the blind to search for books through voice communication with the application, in addition to that, the blind can speak with the application in Arabic easily.
 
 ## Getting Started
 
