@@ -35,3 +35,6 @@ class CommandError extends CommandState {
   final String message;
   const CommandError({required this.message});
 }
+
+class ListenToNameCategoryLoadingState extends CommandState {}
+class ListenToNameCategoryLoadedState extends CommandState {}

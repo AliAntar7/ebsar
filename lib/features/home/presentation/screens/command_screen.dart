@@ -68,7 +68,7 @@ class CommandScreen extends StatelessWidget {
           // },
           onDoubleTap: () {
             cubit.stop();
-            cubit.playCategoryVoice();
+            cubit.readCategoryName();
             Navigator.push(
               context,
               MaterialPageRoute(

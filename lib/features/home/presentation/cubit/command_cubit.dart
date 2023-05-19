@@ -73,17 +73,21 @@ class CommandCubit extends Cubit<CommandState> {
     return null;
   }
 
-  Future<void> playCategoryVoice() async {
-    emit(CategoryVoiceLoadingState());
-    audioPlayer.play(AssetSource('voices/first.mp3'));
-    Future.delayed(const Duration(seconds: 3));
-    print(categories.length);
+
+  Future<void> readCategoryName() async {
+    await tts.setLanguage('ar-EG');
+    await tts.setSpeechRate(0.5);
+    await tts.setPitch(1.0);
+    await tts.setVolume(1.0);
+    await tts.speak('قائمة التصنيفات لدينا هي ');
+    await tts.awaitSpeakCompletion(true);
     for (int i = 0; i < categories.length; i++) {
-      audioPlayer.play(UrlSource('${categories[i].categoryVoice}'));
-      await Future.delayed(Duration(seconds: 3));
+      await tts.speak(categories[i].name!);
+      await tts.awaitSpeakCompletion(true);
     }
-    emit(CategoryVoiceLoadedState());
+    await tts.speak('لإختيار تصنيف اضغط ضغطتان على الشاشة , و اذكر اسم التصنيف');
   }
+
 
   void listen() async {
     emit(CommandLoading());
@@ -110,6 +114,62 @@ class CommandCubit extends Cubit<CommandState> {
     }
     emit(CommandLoaded());
   }
+
+  var categoryText = '';
+
+  void listenToNameCategory() async {
+    emit(ListenToNameCategoryLoadingState());
+    audioPlayer.stop();
+    var available = await speechToText.initialize();
+    if (available) {
+      speechToText.listen(
+        onResult: (result) {
+          categoryText = result.recognizedWords;
+          if (categoryText.isEmpty) {
+            print("no category name found");
+          } else {
+            print(categoryText);
+            searchForBooksByCategoryName(categoryText);
+          }
+          print(categoryText);
+          emit(ListenToNameCategoryLoadedState());
+        },
+        listenMode: ListenMode.search,
+        localeId: 'ar_EG',
+      );
+    }
+    emit(ListenToNameCategoryLoadedState());
+  }
+
+  // {
+  // "id": 2,
+  // "name": "كتاب قوة العادات",
+  // "category": {
+  // "id": 6,
+  // "name": "تنمية بشرية",
+  // "category_voice": "https://ebsar.website/public/uploads/category_voices/tnmi.mp3"
+  // },
+  // "Image": {
+  // "book_image": "https://ebsar.website/public/uploads/books_images/قوة العادات.jpg"
+  // },
+  // "File": {
+  // "book_file": "https://ebsar.website/public/uploads/books_files/قوة العادات كامل.mp3"
+  // },
+  // "Voice": {
+  // "book_voice": "https://ebsar.website/public/uploads/books_voices/qwt_eladatt_voice.mp3"
+  // }
+
+
+
+  // build function to search on book list and return only books for each category
+  Future<void> searchForBooksByCategoryName(String categoryText) async {
+    emit(CommandSearchLoading());
+    book = null;
+    book = books.firstWhere((element) => element.category!.name!.contains(categoryText));
+    print(book!.name);
+    emit(CommandSearchLoaded());
+  }
+
 
   Future<void> searchOnBookList(String text) async {
     // emit(CommandSearchLoading());

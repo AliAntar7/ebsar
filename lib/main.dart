@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:ebsar/core/utils/observer.dart';
 import 'package:ebsar/features/home/presentation/cubit/command_cubit.dart';
-import 'package:ebsar/features/home/presentation/cubit/home_cubit.dart';
 import 'package:ebsar/features/home/presentation/screens/command_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
